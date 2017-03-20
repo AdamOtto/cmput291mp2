@@ -2,34 +2,22 @@ import xml.etree.ElementTree as ET
 
 '''
 This function is used to gather all the data in the xml files provided on eclass.
+
+Will read line by line the xml file and print the results into three text files.
 '''
 def readXMLFile(fileName):
-    tree = ET.parse(fileName)
-    root = tree.getroot()
-    
-    #Elements of the xml can be obtained through elements in root.
-    #Ex: The first element can be reached with root[0][0].text => ID.
 
-    #All of this code is used for testing and demonstrating how to access the data in the xml file.
-    #This code can be commented out/in, it doesn't affect the functionality of the function. 
-    ''' 
-    for child in root:
-        print("ID: " + child[0].text + 
-        ", Created at: " + child[1].text +
-        "\ntext: " + child[2].text)
-        print("retweet count: " + child[3].text)
-        #All of the users data is stored in root[i][4].
-        #Some of these fields are empty, so a None check may be required.
-        print("Name: " + child[4][0].text)
-        print("Location: " + child[4][1].text)
-        if child[4][2].text is not None:
-            print("Description: " + child[4][2].text)
-        if child[4][3].text is not None:
-            print("URL: " + child[4][3].text)
-        print("\n")
-    '''
-    return root
+    with open(fileName, 'r') as xmlFile:
+        for line in xmlFile:
+           if (line.find("<status>") is 0):
+               #first, get the necessary information for createTweetsTextFile
+               ID = line[line.find("<id>") + len("<id>"):line.find("</id>")]
+               createTweetsTextFile(ID, line)
+               
+               createTermsTextFile(ID, line)
 
+               createDatesTextFile(ID, line[line.find("<created_at>") + len("<created_at>"):line.find("</created_at>")])
+    return
 
 '''
 This function creates a text file with all the terms in a tweet.  It arrages them as follows
@@ -38,26 +26,33 @@ Where t signifies the term is a tweet, n signifies the term is a name and l sign
 Term is the word that appears in the tweet/name/location
 And ID is the tweet ID it orginated from.
 '''
-def createTermsTextFile(xmlData):
-    term_file = open("terms.txt", "w")
-    for status in xmlData:
-        #Get the important data for writing
-        text = removeSpecialCharFromString(status[2].text).split(" ")
-        tweetID = status[0].text
-        #Write out all the terms in the tweet <text>.
-        for term in text:
-            if len(term) > 2:
-                term_file.write("t-" + term.lower() + ":" + tweetID + "\n")
-        #Get all the terms in <name> and write the to the file.
-        userName = removeSpecialCharFromString(status[4][0].text).split(" ")
-        for name in userName:
+def createTermsTextFile(tweetID, xmlData):
+    term_file = open("terms.txt", "a")
+    outputString = ""
+    
+    #Get all the terms in the text
+    text = xmlData[xmlData.find("<text>") + len("<text>"): xmlData.find("</text>")]
+    text = removeSpecialCharFromString(text).split(" ")
+    for term in text:
+        if len(term) > 2:
+            outputString += "t-" + term.lower() + ":" + tweetID + "\n"
+
+    #Get all the terms in the name
+    text = xmlData[xmlData.find("<name>") + len("<name>"): xmlData.find("</name>")]
+    text = removeSpecialCharFromString(text).split(" ")
+    for name in text:
             if len(name) > 2:
-                term_file.write("n-" + name.lower() + ":" + tweetID + "\n")
-        #Get all the terms in <location> and write the to the file.
-        userLocation = removeSpecialCharFromString(status[4][1].text).split(" ")
-        for location in userLocation:
+                outputString += "n-" + name.lower() + ":" + tweetID + "\n"
+    
+    #Get all the terms in the location
+    text = xmlData[xmlData.find("<location>") + len("<location>"): xmlData.find("</location>")]
+    text = removeSpecialCharFromString(text).split(" ")
+    for location in text:
             if len(location) > 2:
-                term_file.write("l-" + location.lower() + ":" + tweetID + "\n")
+                outputString += "l-" + location.lower() + ":" + tweetID + "\n"
+
+    #Print to the text file.
+    term_file.write(outputString)
     term_file.close()    
 
 '''
@@ -66,14 +61,9 @@ d:ID
 where d is the date is form year/month/day => NOTE: I may be wrong.
 and ID is the tweet ID
 '''
-def createDatesTextFile(xmlData):
-    term_file = open("dates.txt", "w")
-    for status in xmlData:
-        #Get the important data for writing
-        tweetID = status[0].text
-        date = status[1].text
-        term_file.write(date + ":" + tweetID + "\n")
-
+def createDatesTextFile(tweetID, xmlData):
+    term_file = open("dates.txt", "a")
+    term_file.write(xmlData + ":" + tweetID + "\n")
     term_file.close() 
 
 
@@ -83,35 +73,10 @@ ID:rec
 where ID is the tweet ID
 and rec is the record in xml format
 '''
-def createTweetsTextFile(xmlData):
-    term_file = open("tweets.txt", "w")
-    for status in xmlData:
-        #Construct the output string
-        outputString = ""
-        outputString += status[0].text
-        outputString += ":<status> <id>"
-        outputString += status[0].text
-        outputString += "</id> <created_at>"
-        outputString += status[1].text
-        outputString += "</created_at> <text>"
-        outputString += status[2].text
-        outputString += "</text> <retweet_count>"
-        outputString += status[3].text
-        outputString += "</retweet_count> <user> <name>"
-        outputString += status[4][0].text
-        outputString += "</name> <location>"
-        outputString += status[4][1].text
-        outputString += "</location> <description>"
-        if status[4][2].text is not None:
-             outputString += status[4][2].text
-        outputString += "</description> <url>"
-        if status[4][3].text is not None:
-             outputString += status[4][3].text
-        outputString += "</url> </user> </status>\n"
-
-
-        term_file.write(outputString)
-
+def createTweetsTextFile(ID, xmlData):
+    term_file = open("tweets.txt", "a")
+    outputString = ID + ":" + xmlData
+    term_file.write(outputString)
     term_file.close() 
 
 
