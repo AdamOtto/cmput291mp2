@@ -1,4 +1,8 @@
 cat laod.tweets.txt | db_load -T -t hash tw.idx
-cat load.dates.txt | db_load -T -t btree da.idx
-cat load.terms.txt | db_load -T -t btree te.idx
+or ./break < tweets.txt | db_load -T -t hash tw.idx
 
+cat load.dates.txt | db_load -T -t btree da.idx
+or ./break < dates.txt | db_load -T -t btree da.idx
+
+cat load.terms.txt | db_load -T -t btree te.idx
+or ./break < terms.txt | db_load -T -t btree te.idx
