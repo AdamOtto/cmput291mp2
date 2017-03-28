@@ -1,22 +1,4 @@
 import re
-print('Welcome to Phase 3 for Mini Project 2')
-
-while True:
-	queries = input('Please enter your query: ')
-	#Queries must be case insensitive
-	queries = queries.lower()
-	#Queries can potentially be all passed at once, must process individually according to grammar
-	queries = queries.split()
-	for query in queries:
-		if isDateQuery(query):
-			print('You have a date query')
-		elif isFullTermQuery(query):
-			print('You have a full term query')
-		elif isAlphaNumeric(query):
-			print('You have a simple term query')
-		else:
-			print('This is not a valid query: ' + query)
-		
 
 def isDateQuery(string):
 	'''
@@ -49,8 +31,70 @@ def isAlphaNumeric(string):
 	'''
 	#checks for any character outside the parameters
 	pattern = re.compile('[^0-9a-zA-Z_]')
-	value = pattern.seach(string)
+	value = pattern.search(string)
 	if value:
 		return False
 	return True
+
+#Enumerate some query types
+TEXT = 1
+NAME = 2
+LOCATION = 3
+DATEEXACT = 4
+DATELESS = 5
+DATEGREATER = 6
+
+print('Welcome to Phase 3 for Mini Project 2')
+
+while True:
+	queries = input('Please enter your query: ')
+	#Queries must be case insensitive
+	queries = queries.lower()
+	#Queries can potentially be all passed at once, must process individually according to grammar
+	queries = queries.split()
+	for query in queries:
+		if isDateQuery(query):
+			#Find the query type and strip the type from the query
+			date = query[5:]
+			if query[4] == ':':
+				qtype = DATEEXACT
+			elif query[4] == '<':
+				qtype = DATELESS
+			elif query[4] == '>':
+				qtype = DATEGREATER
+			
+			date = date.split('/')
+			year = date[0]
+			month = date[1]
+			day = date[2]
+			print('You have a date query of type: ', qtype)
+			print('Looking for year = ' + year)
+			print('Looking for month = ' + month)
+			print('Looking for day = ' + day)
+		elif isFullTermQuery(query):
+			#Find the query type and strip the type from the query
+			if query[0:4] == 'text':
+				term = query[5:]
+				qtype = TEXT
+			elif query[0:4] == 'name':
+				term = query[5:]
+				qtype = NAME
+			elif query[0:8] == 'location':
+				term = query[9:]
+				qtype = LOCATION
+			
+			#is this a termPattern query?
+			if isAlphaNumeric(term[:-1]) and term[-1] == '%':
+				print('This query is a prefix full term query')
+			elif isAlphaNumeric(term):
+				print('This is a non-prefix full term query')
+			else:
+				print('This full-term query has a proper type, but this term is improper: ', term)
+		elif isAlphaNumeric(query):
+			print('You have a simple term query')
+		else:
+			print('This is not a valid query: ' + query)
+		
+
+
 
