@@ -63,10 +63,16 @@ while True:
 			elif query[4] == '>':
 				qtype = DATEGREATER
 			
-			date = date.split('/')
-			year = date[0]
-			month = date[1]
-			day = date[2]
+			dates = date.split('/')
+			if len(dates) != 3:
+				print('You had a proper date query prefix, but this date is not formatted right: ', date)
+				continue
+			year = dates[0]
+			month = dates[1]
+			day = dates[2]
+			if not year.isdigit() or not month.isdigit() or not day.isdigit():
+				print('One of these date values is not a number: ', year, ', ',month,',',day)
+				continue
 			print('You have a date query of type: ', qtype)
 			print('Looking for year = ' + year)
 			print('Looking for month = ' + month)
