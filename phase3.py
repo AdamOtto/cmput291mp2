@@ -1,4 +1,5 @@
 import re
+from bsddb3 import db
 
 def isDateQuery(string):
 	'''
@@ -54,6 +55,11 @@ while True:
 	queries = queries.split()
 	for query in queries:
 		if isDateQuery(query):
+			DATABASE = 'da.idx'
+			database = db.DB()
+			database.open(DATABASE,None, db.DB_BTREE, db.DB_CREATE)
+			curs = database.cursor()
+			
 			#Find the query type and strip the type from the query
 			date = query[5:]
 			if query[4] == ':':
@@ -77,7 +83,36 @@ while True:
 			print('Looking for year = ' + year)
 			print('Looking for month = ' + month)
 			print('Looking for day = ' + day)
-		elif isFullTermQuery(query):
+			
+			if (qtype == DATEEXACT):
+				db_key = date.encode('ascii','ignore')
+				value = database.get(db_key)
+				if (value == None):
+					print("The date you were searhcing was not found.")
+					continue
+				else:
+					print("Return value of:", value.decode("utf-8"))
+			elif (qtype == DATELESS):
+				db_key = date.encode('ascii','ignore')
+				data_dates = database.keys()
+				for data_date in data_dates:
+					if (data_date < db_key):		
+						value = database.get(data_date)
+						print("Return value of:", value.decode("utf-8"))				
+			else:
+				db_key = date.encode('ascii','ignore')
+				data_dates = database.keys()
+				for data_date in data_dates:
+					if (data_date > db_key):		
+						value = database.get(data_date)
+						print("Return value of:", value.decode("utf-8"))			
+			
+			curs.close()
+			database.close()		
+			
+				
+			
+		elif isFullTermQuery(query):			
 			#Find the query type and strip the type from the query
 			if query[0:4] == 'text':
 				term = query[5:]
@@ -92,12 +127,60 @@ while True:
 			#is this a termPattern query?
 			if isAlphaNumeric(term[:-1]) and term[-1] == '%':
 				print('This query is a prefix full term query')
+				
+				DATABASE = 'tw.idx'
+				te_database = db.DB()
+				te_database.open(DATABASE,None, db.DB_HASH, db.DB_CREATE)	
+				
+				db_key = term[:-1].encode('ascii','ignore')
+				tweets = te_database.values()
+				#print(data_dates)
+				for data_tweet in tweets:
+					#if (data_date > db_key):
+					tweet = data_tweet.decode("utf-8")
+					#print(tweet[70:70+len(term)-1])
+					if(tweet[71] == '@'):
+						index = 0
+						while (tweet[71 + index] != ' '):
+							index += 1
+						if tweet[71+index:71+index+len(term)] == term:
+							print(tweet)
+					else:
+						if tweet[70:70+len(term)-1] == term[:-1]:
+							print(tweet)						
+						
+					#if query == tweet:
+					#	print("Return value of:", tweet)
+					#value = te_database.get(data_date)
+					#.decode("utf-8"))
+				#curs.close()
+				te_database.close()			
+				
 			elif isAlphaNumeric(term):
 				print('This is a non-prefix full term query')
 			else:
 				print('This full-term query has a proper type, but this term is improper: ', term)
+				
 		elif isAlphaNumeric(query):
 			print('You have a simple term query')
+			DATABASE = 'tw.idx'
+			te_database = db.DB()
+			te_database.open(DATABASE,None, db.DB_HASH, db.DB_CREATE)
+			
+			db_key = query.encode('ascii','ignore')
+			tweets = te_database.values()
+			#print(data_dates)
+			for data_tweet in tweets:
+				#if (data_date > db_key):
+				tweet = data_tweet.decode("utf-8")
+				if query in tweet:
+					print("Return value of:", tweet)
+				#value = te_database.get(data_date)
+				#.decode("utf-8"))
+					
+			#curs.close()
+			te_database.close()					
+			
 		else:
 			print('This is not a valid query: ' + query)
 		
