@@ -3,15 +3,35 @@ from bsddb3 import db
 def date_exact(date, da_database, da_cursor):
 	
 	correct_ids = []
-	
+	print("DATE" , date)
+	date = date + '\r'
 	db_key = date.encode('ascii','ignore')
-	value = da_database.get(db_key, db.DB_FIRST)
-	if (value == None):
-		print("The date you were searhcing was not found.")
-		return None
-	else:
-		correct_ids.append(value.decode("utf-8"))
-		print("Return value of:", value.decode("utf-8"))
+	print("DBKEY" , db_key)
+	value = da_database.get(db_key)
+	print("Value from database",value)
+	print("FIRST cursor value", da_cursor.first())
+	
+	value = da_cursor.get(db_key, db.DB_SET)
+	print("Value from cursor",value)
+	while (value != None):
+		value = da_cursor.next_dup()
+		print("Value from inside while",value)
+		
+	
+	#print("________",value, "CUR", da_cursor.current())
+	#value = da_cursor.next()
+	#print(value[1].decode("utf-8"))
+	#correct_ids.append(value[1].decode("utf-8"))
+	#print("NEXT",da_cursor.next_dup())	
+	#if (value == None):
+	#	print("The date you were searhcing was not found.")
+	#	return None
+	#else:
+#		#print(value)
+#		correct_ids.append(value[1].decode("utf-8"))
+#		#print(da_cursor.next_dup())
+		
+		#print("Return value of:", value.decode("utf-8"))
 	return correct_ids
 		
 		

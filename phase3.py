@@ -3,14 +3,23 @@ from bsddb3 import db
 from data_retrieval import *
 
 tw_database = db.DB()
+tw_database.set_flags(db.DB_DUP)
 tw_database.open('tw.idx',None, db.DB_HASH, db.DB_CREATE)
 tw_cursor = tw_database.cursor()
+
 te_database = db.DB()
+te_database.set_flags(db.DB_DUP)
 te_database.open('te.idx',None, db.DB_BTREE, db.DB_CREATE)
 te_cursor = te_database.cursor()
+
 da_database = db.DB()
+da_database.set_flags(db.DB_DUP)
 da_database.open('da.idx',None, db.DB_BTREE, db.DB_CREATE)
 da_cursor = da_database.cursor()
+
+
+
+
 
 def isDateQuery(string):
 	'''
