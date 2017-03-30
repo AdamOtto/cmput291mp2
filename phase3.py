@@ -1,19 +1,16 @@
 import re
 from bsddb3 import db
 
-'''
-tweetDB = db.DB()
-termDB = db.DB()
-dateDB = db.DB()
-tweetDB.open("tw.idx")
-termDB.open("te.idx")
-dateDB.open("da.idx")
-#tweetDB.associate(termDB, None)
-#tweetDB.associate(dateDB, None)
-cur = tweetDB.cursor()
-find = cur.get(b'usually',db.DB_FIRST)
-print(find)
-'''
+
+tw_database = db.DB()
+tw_database.open('tw.idx',None, db.DB_HASH, db.DB_CREATE)
+tw_cursor = tw_database.cursor()
+te_database = db.DB()
+te_database.open('te.idx',None, db.DB_BTREE, db.DB_CREATE)
+te_cursor = te_database.cursor()
+da_database = db.DB()
+da_database.open('da.idx',None, db.DB_BTREE, db.DB_CREATE)
+da_cursor = da_database.cursor()
 
 def isDateQuery(string):
 	'''
@@ -100,7 +97,7 @@ while True:
 			
 			if (qtype == DATEEXACT):
 				db_key = date.encode('ascii','ignore')
-				value = database.get(db_key)
+				value = da_database.get(db_key)
 				if (value == None):
 					print("The date you were searhcing was not found.")
 					continue
@@ -108,21 +105,18 @@ while True:
 					print("Return value of:", value.decode("utf-8"))
 			elif (qtype == DATELESS):
 				db_key = date.encode('ascii','ignore')
-				data_dates = database.keys()
+				data_dates = da_database.keys()
 				for data_date in data_dates:
 					if (data_date < db_key):		
-						value = database.get(data_date)
+						value = da_database.get(data_date)
 						print("Return value of:", value.decode("utf-8"))				
 			else:
 				db_key = date.encode('ascii','ignore')
-				data_dates = database.keys()
+				data_dates = da_database.keys()
 				for data_date in data_dates:
 					if (data_date > db_key):		
-						value = database.get(data_date)
-						print("Return value of:", value.decode("utf-8"))			
-			
-			curs.close()
-			database.close()		
+						value = da_database.get(data_date)
+						print("Return value of:", value.decode("utf-8"))					
 			
 				
 			
@@ -131,23 +125,36 @@ while True:
 			if query[0:4] == 'text':
 				term = query[5:]
 				qtype = TEXT
+				
+				search_term = "t-" + term
+				db_key = search_term.encode('ascii','ignore')
+				tweet = te_database.get(db_key)	
+				print(tweet)
+				
 			elif query[0:4] == 'name':
 				term = query[5:]
 				qtype = NAME
+				
+				search_term = "n-" + term
+				db_key = search_term.encode('ascii','ignore')
+				tweet = te_database.get(db_key)	
+				print(tweet)
+				
 			elif query[0:8] == 'location':
 				term = query[9:]
 				qtype = LOCATION
+				
+				search_term = "l-" + term
+				db_key = search_term.encode('ascii','ignore')
+				tweet = te_database.get(db_key)	
+				print(tweet)				
 			
 			#is this a termPattern query?
 			if isAlphaNumeric(term[:-1]) and term[-1] == '%':
-				print('This query is a prefix full term query')
-				
-				DATABASE = 'tw.idx'
-				te_database = db.DB()
-				te_database.open(DATABASE,None, db.DB_HASH, db.DB_CREATE)	
+				print('This query is a prefix full term query')	
 				
 				db_key = term[:-1].encode('ascii','ignore')
-				tweets = te_database.values()
+				tweets = tw_database.values()
 				#print(data_dates)
 				for data_tweet in tweets:
 					#if (data_date > db_key):
@@ -161,14 +168,7 @@ while True:
 							print(tweet)
 					else:
 						if tweet[70:70+len(term)-1] == term[:-1]:
-							print(tweet)						
-						
-					#if query == tweet:
-					#	print("Return value of:", tweet)
-					#value = te_database.get(data_date)
-					#.decode("utf-8"))
-				#curs.close()
-				te_database.close()			
+							print(tweet)							
 				
 			elif isAlphaNumeric(term):
 				print('This is a non-prefix full term query')
@@ -182,7 +182,7 @@ while True:
 			te_database.open(DATABASE,None, db.DB_HASH, db.DB_CREATE)
 			
 			db_key = query.encode('ascii','ignore')
-			tweets = te_database.values()
+			tweets = tw_database.values()
 			#print(data_dates)
 			for data_tweet in tweets:
 				#if (data_date > db_key):
@@ -198,6 +198,8 @@ while True:
 		else:
 			print('This is not a valid query: ' + query)
 		
-
+tw_database.close()
+te_database.close()
+da_database.close()
 
 
