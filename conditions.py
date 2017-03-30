@@ -75,7 +75,23 @@ def parseConditions(conditions):
 	'''
 	Given a list of conditions, parses each one using Dyllan's query searching functions.
 	Too avoid too much memory usage, will get a query's list, then if there is another query
-	will AND it with that queries list before continuing.
+	it will AND it with that queries list before continuing.
 	'''
-	#@TODO
-	pass
+	#@TODO pass the partial flag for text name and location
+	#@TODO get a date function in data_retrival that will turn the integer part dates passed back into a string
+	total_results = []
+	current_results = []
+	first_time = True
+	for con in conditions:
+		if con[0] == TEXT:
+			if con[1]:
+		elif con[0] == NAME:
+			pass
+		elif con[0] == LOCATION:
+			pass
+		elif con[0] == DATEEXACT:
+			date_exact(year, month, day, db, cur)
+		elif con[0] == DATELESS:
+			date_less(year, month, day, db, cur)
+		elif con[0] == DATEGREATER:
+			date_greater(year, month, day, db, cur)
