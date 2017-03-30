@@ -66,9 +66,6 @@ while True:
 	queries = queries.split()
 	for query in queries:
 		if isDateQuery(query):
-			DATABASE = 'da.idx'
-			database = db.DB()
-			database.open(DATABASE,None, db.DB_BTREE, db.DB_CREATE)
 			curs = database.cursor()
 			
 			#Find the query type and strip the type from the query
@@ -177,9 +174,6 @@ while True:
 				
 		elif isAlphaNumeric(query):
 			print('You have a simple term query')
-			DATABASE = 'tw.idx'
-			te_database = db.DB()
-			te_database.open(DATABASE,None, db.DB_HASH, db.DB_CREATE)
 			
 			db_key = query.encode('ascii','ignore')
 			tweets = tw_database.values()
