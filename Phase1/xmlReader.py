@@ -89,21 +89,28 @@ doop = Th is is  a  dir ty St r in g
 '''
 def removeSpecialCharFromString(dirtyString):
     cleanString = ""
+    RemoveSpecialCharacter = False
     for char in dirtyString:
-        #is char 0-9
-        if (ord(char) >= 48 and ord(char) <= 57):
-            cleanString += char
-        #is char a-z
-        elif (ord(char) >= 97 and ord(char) <= 122):
-            cleanString += char
-        #is char A-Z
-        elif (ord(char) >= 65 and ord(char) <= 90):
-            cleanString += char
-        #is char A-Z
-        elif char is " ":
-            cleanString += char
+        if RemoveSpecialCharacter is False:
+            if (char is '&'):
+                RemoveSpecialCharacter = True
+            #is char 0-9
+            elif (ord(char) >= 48 and ord(char) <= 57):
+                cleanString += char
+            #is char a-z
+            elif (ord(char) >= 97 and ord(char) <= 122):
+                cleanString += char
+            #is char A-Z
+            elif (ord(char) >= 65 and ord(char) <= 90):
+                cleanString += char
+            #is char A-Z
+            elif char is " ":
+                cleanString += char
+            else:
+                cleanString += " "
         else:
-            cleanString += " "
+            if (char is ';'):
+                RemoveSpecialCharacter = False
     return cleanString
 
 
