@@ -1,7 +1,7 @@
 import re
 from bsddb3 import db
-<<<<<<< HEAD
-=======
+
+'''
 tweetDB = db.DB()
 termDB = db.DB()
 dateDB = db.DB()
@@ -13,7 +13,7 @@ dateDB.open("da.idx")
 cur = tweetDB.cursor()
 find = cur.get(b'usually',db.DB_FIRST)
 print(find)
->>>>>>> origin/master
+'''
 
 def isDateQuery(string):
 	'''
