@@ -1,6 +1,6 @@
 import re
 from bsddb3 import db
-
+from data_retrieval import *
 
 tw_database = db.DB()
 tw_database.open('tw.idx',None, db.DB_HASH, db.DB_CREATE)
@@ -52,11 +52,13 @@ def isAlphaNumeric(string):
 TEXT = 1
 NAME = 2
 LOCATION = 3
-DATEEXACT = 4
-DATELESS = 5
-DATEGREATER = 6
+GENERAL = 4
+DATEEXACT = 5
+DATELESS = 6
+DATEGREATER = 7
 
 print('Welcome to Phase 3 for Mini Project 2')
+
 
 while True:
 	queries = input('Please enter your query: ')
@@ -66,10 +68,6 @@ while True:
 	queries = queries.split()
 	for query in queries:
 		if isDateQuery(query):
-			DATABASE = 'da.idx'
-			database = db.DB()
-			database.open(DATABASE,None, db.DB_BTREE, db.DB_CREATE)
-			curs = database.cursor()
 			
 			#Find the query type and strip the type from the query
 			date = query[5:]
@@ -96,27 +94,11 @@ while True:
 			print('Looking for day = ' + day)
 			
 			if (qtype == DATEEXACT):
-				db_key = date.encode('ascii','ignore')
-				value = da_database.get(db_key)
-				if (value == None):
-					print("The date you were searhcing was not found.")
-					continue
-				else:
-					print("Return value of:", value.decode("utf-8"))
+				date_exact(date, da_database, da_cursor)
 			elif (qtype == DATELESS):
-				db_key = date.encode('ascii','ignore')
-				data_dates = da_database.keys()
-				for data_date in data_dates:
-					if (data_date < db_key):		
-						value = da_database.get(data_date)
-						print("Return value of:", value.decode("utf-8"))				
+				date_less(date, da_database, da_cursor)
 			else:
-				db_key = date.encode('ascii','ignore')
-				data_dates = da_database.keys()
-				for data_date in data_dates:
-					if (data_date > db_key):		
-						value = da_database.get(data_date)
-						print("Return value of:", value.decode("utf-8"))					
+				date_greater(date, da_database, da_cursor)	
 			
 				
 			
@@ -126,50 +108,27 @@ while True:
 				term = query[5:]
 				qtype = TEXT
 				
-				search_term = "t-" + term
-				db_key = search_term.encode('ascii','ignore')
-				tweet = te_database.get(db_key)	
-				print(tweet)
+				full_text(term, te_database, te_cursor)
 				
 			elif query[0:4] == 'name':
 				term = query[5:]
 				qtype = NAME
 				
-				search_term = "n-" + term
-				db_key = search_term.encode('ascii','ignore')
-				tweet = te_database.get(db_key)	
-				print(tweet)
+				full_name(term, te_database, te_cursor)
 				
 			elif query[0:8] == 'location':
 				term = query[9:]
 				qtype = LOCATION
 				
-				search_term = "l-" + term
-				db_key = search_term.encode('ascii','ignore')
-				tweet = te_database.get(db_key)	
-				print(tweet)				
+				full_location(term, te_database, te_cursor)
+							
 			
 			#is this a termPattern query?
 			if isAlphaNumeric(term[:-1]) and term[-1] == '%':
 				print('This query is a prefix full term query')	
 				
-				db_key = term[:-1].encode('ascii','ignore')
-				tweets = tw_database.values()
-				#print(data_dates)
-				for data_tweet in tweets:
-					#if (data_date > db_key):
-					tweet = data_tweet.decode("utf-8")
-					#print(tweet[70:70+len(term)-1])
-					if(tweet[71] == '@'):
-						index = 0
-						while (tweet[71 + index] != ' '):
-							index += 1
-						if tweet[71+index:71+index+len(term)] == term:
-							print(tweet)
-					else:
-						if tweet[70:70+len(term)-1] == term[:-1]:
-							print(tweet)							
-				
+				partial_match(term, tw_database, tw_cursor)
+							
 			elif isAlphaNumeric(term):
 				print('This is a non-prefix full term query')
 			else:
@@ -177,29 +136,19 @@ while True:
 				
 		elif isAlphaNumeric(query):
 			print('You have a simple term query')
-			DATABASE = 'tw.idx'
-			te_database = db.DB()
-			te_database.open(DATABASE,None, db.DB_HASH, db.DB_CREATE)
 			
-			db_key = query.encode('ascii','ignore')
-			tweets = tw_database.values()
-			#print(data_dates)
-			for data_tweet in tweets:
-				#if (data_date > db_key):
-				tweet = data_tweet.decode("utf-8")
-				if query in tweet:
-					print("Return value of:", tweet)
-				#value = te_database.get(data_date)
-				#.decode("utf-8"))
-					
-			#curs.close()
-			te_database.close()					
+			simple_term(query, tw_database, tw_cursor)					
 			
 		else:
 			print('This is not a valid query: ' + query)
-		
+
+	
+tw_cursor.close()
+te_cursor.close()
+da.cursor.close()
 tw_database.close()
 te_database.close()
-da_database.close()
+da_database.close()	
+
 
 
