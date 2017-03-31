@@ -1,5 +1,8 @@
 from bsddb3 import db
 
+def date_from_ints(year, month, day):
+	return str(year) + '/' + str(month) + '/' str(day)
+
 def date_exact(date, da_database, da_cursor):
 	
 	correct_ids = []
