@@ -11,15 +11,15 @@ def date_from_ints(year, month, day):
 
 
 #This function return the ids of tweets that match the date given
-def date_exact(date, da_database, da_cursor):
+#def date_exact(date, da_database, da_cursor):
 
 #----------comments at the start of dates are for new implementation -----------	
-# def date_exact(year, month, day, da_database, da_cursor): 
+def date_exact(year, month, day, da_database, da_cursor): 
 	
-	#date = date_from_ints(year, month, day)
-	#if date == False:
-	#	print('You had a proper date query prefix, but this date is not formatted right: ', date)
-	#return False
+	date = date_from_ints(year, month, day)
+	if date == False:
+		print('You had a proper date query prefix, but this date is not formatted right: ', date)
+	return False
 	
 	correct_ids = []
 	
@@ -40,13 +40,13 @@ def date_exact(date, da_database, da_cursor):
 		
 
 #this function returns all ids of tweets which dates are less than the one specified	
-def date_less(date, da_database, da_cursor):
+#def date_less(date, da_database, da_cursor):
 	
-# def date_exact(year, month, day, da_database, da_cursor): 
+def date_less(year, month, day, da_database, da_cursor): 
 	
-	#date = date_from_ints(year, month, day)
-	#if date == False:
-	#	print('You had a proper date query prefix, but this date is not formatted right: ', date)	
+	date = date_from_ints(year, month, day)
+	if date == False:
+		print('You had a proper date query prefix, but this date is not formatted right: ', date)	
 	
 	correct_ids = []
 	
@@ -62,13 +62,13 @@ def date_less(date, da_database, da_cursor):
 	
 	
 #this function returns all ids of tweets which dates are greater than the one specified	
-def date_greater(date, da_database, da_cursor):
+#def date_greater(date, da_database, da_cursor):
 	
-# def date_exact(year, month, day, da_database, da_cursor): 
+def date_greater(year, month, day, da_database, da_cursor): 
 	
-	#date = date_from_ints(year, month, day)
-	#if date == False:
-	#	print('You had a proper date query prefix, but this date is not formatted right: ', date)	
+	date = date_from_ints(year, month, day)
+	if date == False:
+		print('You had a proper date query prefix, but this date is not formatted right: ', date)	
 	
 	correct_ids = []
 	

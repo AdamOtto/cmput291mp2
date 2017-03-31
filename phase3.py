@@ -1,6 +1,7 @@
 import re
 from bsddb3 import db
 from data_retrieval import *
+from conditions import *
 
 tw_database = db.DB()
 tw_database.set_flags(db.DB_DUP)
@@ -55,6 +56,25 @@ def isAlphaNumeric(string):
 		return False
 	return True
 
+
+'''
+A set of queries produces a conditions list, with the following spec for each condition:
+[qtype, info...]
+where each condition by qtype looks like:
+[TEXT, prefix?, term]
+[NAME, prefix?, term]
+[LOCATION, prefix?, term]
+[GENERAL, term]
+[DATEEXACT, year, month, day]
+[DATELESS, year, month, day]
+[DATEGREATER, year, month, day]
+
+prefix? is True if a prefix term, False if not
+term is a string
+year, month and day are integers
+
+and the qtypes are enumerated as:
+'''
 #Enumerate some query types
 INVALID = -1
 TEXT = 1
@@ -67,18 +87,19 @@ DATEGREATER = 7
 
 print('Welcome to Phase 3 for Mini Project 2')
 
-print(tw_cursor.first())
-print(te_cursor.first())
-print(da_cursor.first())
+#print(tw_cursor.first())
+#print(te_cursor.first())
+#print(da_cursor.first())
+
 
 while True:
+	conditions = []
 	queries = input('Please enter your query: ')
 	#Queries must be case insensitive
 	queries = queries.lower()
 	#Queries can potentially be all passed at once, must process individually according to grammar
 	queries = queries.split()
-	TotalResults = []
-	queryCount = 0
+	
 	for query in queries:
 		results = []
 		if isDateQuery(query):
@@ -102,23 +123,12 @@ while True:
 			if not year.isdigit() or not month.isdigit() or not day.isdigit():
 				print('One of these date values is not a number: ', year, ', ',month,',',day)
 				continue
-			print('You have a date query of type: ', qtype)
-			print('Looking for year = ' + year)
-			print('Looking for month = ' + month)
-			print('Looking for day = ' + day)
-		
-			search_date = date_from_ints(year, month, day)
+			#print('You have a date query of type: ', qtype)
+			#print('Looking for year = ' + year)
+			#print('Looking for month = ' + month)
+			#print('Looking for day = ' + day)
 			
-			if search_date != False:
-				if (qtype == DATEEXACT):
-					results = date_exact(search_date, da_database, da_cursor)
-				elif (qtype == DATELESS):
-					results = date_less(search_date, da_database, da_cursor)
-				else:
-					results = date_greater(search_date, da_database, da_cursor)	
-			else:
-				print('You had a proper date query prefix, but this date is not formatted right: ', date)
-				
+			conditions.append([qtype, int(year), int(month), int(day)])
 			
 		elif isFullTermQuery(query):			
 			#Find the query type and strip the type from the query
@@ -143,29 +153,41 @@ while True:
 			
 			#is this a termPattern query?
 			if isAlphaNumeric(term[:-1]) and term[-1] == '%':
-				print('This query is a prefix full term query')	
-				
-				partial_match(term, te_database, te_cursor)
+				#print('This query is a prefix full term query')	
 							
+				conditions.append([qtype, True, term[:-1]])
 			elif isAlphaNumeric(term):
-				print('This is a non-prefix full term query')
+				#print('This is a non-prefix full term query')
+				conditions.append([qtype, False, term])
 			else:
 				print('This full-term query has a proper type, but this term is improper: ', term)
-				
+				continue
 		elif isAlphaNumeric(query):
-			print('You have a simple term query')
-			
-			results = simple_term(query, te_database, te_cursor)					
-			
+			#print('You have a simple term query')					
+			conditions.append([GENERAL, query])
 		else:
 			print('This is not a valid query: ' + query)
 
-		if queryCount > 0:
-			TotalResults = [val for val in TotalResults if val in results]
-		else:
-			TotalResults = results
-		queryCount += 1
-	displayResults(TotalResults, tw_database, tw_cursor)
+	#DEBUG: Print conditions list for manual checking of query parsing
+	print("Conditions")
+	for con in conditions:
+		print(*con)
+	print("Cleaning Conditions....")
+	conditions = cleanConditions(conditions)
+	print("Cleaned Conditions....")
+	if conditions:
+		for con in conditions:
+			print(*con)
+	else:
+		print("Your conditions were invalid, sorry")
+	results = parseConditions(conditions, te_database, te_cursor, da_database, da_cursor)
+	print("QUERY RESULTS")
+	for line in results:
+		print(line)
+	
+	
+	
+#displayResults(TotalResults)
 
 	
 tw_cursor.close()
