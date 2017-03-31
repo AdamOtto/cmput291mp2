@@ -1,14 +1,16 @@
 from bsddb3 import db
 
 def date_from_ints(year, month, day):
-	return str(year) + '/' + str(month) + '/' str(day)
+	if len(str(year)) > 4 or len(str(month)) > 2 or len(str(day)) > 2:
+		return False
+	return str(year).zfill(4) + '/' + str(month).zfill(2) + '/' + str(day).zfill(2)
 
 def date_exact(date, da_database, da_cursor):
 	
 	correct_ids = []
 	
 	print("DATE" , date)
-	date = date + '\r'
+	#date = date + '\r'
 	db_key = date.encode('ascii','ignore')
 	print("DBKEY" , db_key)
 	value = da_cursor.get(db_key, db.DB_SET)
@@ -55,11 +57,11 @@ def full_text(text, te_database, te_cursor):
 	
 	correct_ids = []
 	
-	search_term = "t-" + text + "\r"
+	search_term = "t-" + text.lower() #+ "\r"
 	db_key = search_term.encode('ascii','ignore')
 
 	value = te_cursor.get(db_key, db.DB_SET)
-	#print("Value from cursor",value)
+	print("Value from cursor",value)
 	while (value != None):
 		print("Return value of:",value[1].decode("utf-8"))
 		correct_ids.append(value[1].decode("utf-8"))
@@ -72,7 +74,7 @@ def full_name(name, te_database, te_cursor):
 	
 	correct_ids = []
 	
-	search_term = "n-" + name + "\r"
+	search_term = "n-" + name.lower() #+ "\r"
 	db_key = search_term.encode('ascii','ignore')
 	
 	value = te_cursor.get(db_key, db.DB_SET)
@@ -89,7 +91,7 @@ def full_location(location, te_database, te_cursor):
 	
 	correct_ids = []
 	
-	search_term = "l-" + location + "\r"
+	search_term = "l-" + location.lower() #+ "\r"
 	db_key = search_term.encode('ascii','ignore')
 	value = te_cursor.get(db_key, db.DB_SET)
 	#print("Value from cursor",value)

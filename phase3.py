@@ -18,9 +18,6 @@ da_database.open('da.idx',None, db.DB_BTREE, db.DB_CREATE)
 da_cursor = da_database.cursor()
 
 
-
-
-
 def isDateQuery(string):
 	'''
 	Given a string, determines if it is a date query, 
@@ -68,6 +65,9 @@ DATEGREATER = 7
 
 print('Welcome to Phase 3 for Mini Project 2')
 
+print(tw_cursor.first())
+print(te_cursor.first())
+print(da_cursor.first())
 
 while True:
 	queries = input('Please enter your query: ')
@@ -101,14 +101,18 @@ while True:
 			print('Looking for year = ' + year)
 			print('Looking for month = ' + month)
 			print('Looking for day = ' + day)
+		
+			search_date = date_from_ints(year, month, day)
 			
-			if (qtype == DATEEXACT):
-				date_exact(date, da_database, da_cursor)
-			elif (qtype == DATELESS):
-				date_less(date, da_database, da_cursor)
+			if search_date != False:
+				if (qtype == DATEEXACT):
+					date_exact(search_date, da_database, da_cursor)
+				elif (qtype == DATELESS):
+					date_less(search_date, da_database, da_cursor)
+				else:
+					date_greater(search_date, da_database, da_cursor)	
 			else:
-				date_greater(date, da_database, da_cursor)	
-			
+				print('You had a proper date query prefix, but this date is not formatted right: ', date)
 				
 			
 		elif isFullTermQuery(query):			
@@ -146,7 +150,7 @@ while True:
 		elif isAlphaNumeric(query):
 			print('You have a simple term query')
 			
-			simple_term(query, tw_database, tw_cursor)					
+			simple_term(query, te_database, te_cursor)					
 			
 		else:
 			print('This is not a valid query: ' + query)
