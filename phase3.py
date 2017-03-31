@@ -165,7 +165,7 @@ while True:
 		else:
 			TotalResults = results
 		queryCount += 1
-	displayResults(TotalResults)
+	displayResults(TotalResults, tw_database, tw_cursor)
 
 	
 tw_cursor.close()
