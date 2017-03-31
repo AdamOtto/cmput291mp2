@@ -77,7 +77,10 @@ while True:
 	queries = queries.lower()
 	#Queries can potentially be all passed at once, must process individually according to grammar
 	queries = queries.split()
+	TotalResults = []
+	queryCount = 0
 	for query in queries:
+		results = []
 		if isDateQuery(query):
 			
 			#Find the query type and strip the type from the query
@@ -108,11 +111,11 @@ while True:
 			
 			if search_date != False:
 				if (qtype == DATEEXACT):
-					date_exact(search_date, da_database, da_cursor)
+					results = date_exact(search_date, da_database, da_cursor)
 				elif (qtype == DATELESS):
-					date_less(search_date, da_database, da_cursor)
+					results = date_less(search_date, da_database, da_cursor)
 				else:
-					date_greater(search_date, da_database, da_cursor)	
+					results = date_greater(search_date, da_database, da_cursor)	
 			else:
 				print('You had a proper date query prefix, but this date is not formatted right: ', date)
 				
@@ -123,19 +126,19 @@ while True:
 				term = query[5:]
 				qtype = TEXT
 				
-				full_text(term, False, te_database, te_cursor)
+				results = full_text(term, False, te_database, te_cursor)
 				
 			elif query[0:4] == 'name':
 				term = query[5:]
 				qtype = NAME
 				
-				full_name(term,False, te_database, te_cursor)
+				results = full_name(term,False, te_database, te_cursor)
 				
 			elif query[0:8] == 'location':
 				term = query[9:]
 				qtype = LOCATION
 				
-				full_location(term,False, te_database, te_cursor)
+				results = full_location(term,False, te_database, te_cursor)
 							
 			
 			#is this a termPattern query?
@@ -152,10 +155,17 @@ while True:
 		elif isAlphaNumeric(query):
 			print('You have a simple term query')
 			
-			simple_term(query, te_database, te_cursor)					
+			results = simple_term(query, te_database, te_cursor)					
 			
 		else:
 			print('This is not a valid query: ' + query)
+
+		if queryCount > 0:
+			TotalResults = [val for val in TotalResults if val in results]
+		else:
+			TotalResults = results
+		queryCount += 1
+	displayResults(TotalResults)
 
 	
 tw_cursor.close()

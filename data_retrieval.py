@@ -31,7 +31,7 @@ def date_exact(date, da_database, da_cursor):
 	#print("Value from cursor",value)
 	
 	while (value != None):
-		print("Return value:",value[1].decode("utf-8"))
+		#print("Return value:",value[1].decode("utf-8"))
 		correct_ids.append(value[1].decode("utf-8"))
 		value = da_cursor.next_dup()
 		
@@ -56,7 +56,7 @@ def date_less(date, da_database, da_cursor):
 	for data_date in data_dates:
 		if (data_date < db_key):		
 			value = da_database.get(data_date)
-			print("Return value of:", value.decode("utf-8"))
+			#print("Return value of:", value.decode("utf-8"))
 			correct_ids.append(value.decode("utf-8"))
 	return correct_ids
 	
@@ -77,9 +77,9 @@ def date_greater(date, da_database, da_cursor):
 	for data_date in data_dates:
 		if (data_date > db_key):		
 			value = da_database.get(data_date)
-			print("Return value of:", value.decode("utf-8"))
+			#print("Return value of:", value.decode("utf-8"))
 			correct_ids.append(value.decode("utf-8"))
-			
+		
 	return correct_ids
 			
 
@@ -98,12 +98,12 @@ def full_text(text, prefix, te_database, te_cursor):
 		db_key = search_term.encode('ascii','ignore')
 		
 		value = te_cursor.get(db_key, db.DB_SET)
-		print("Value from cursor",value)
+		#print("Value from cursor",value)
 		while (value != None):
-			print("Return value of:",value[1].decode("utf-8"))
+			#print("Return value of:",value[1].decode("utf-8"))
 			correct_ids.append(value[1].decode("utf-8"))
 			value = te_cursor.next_dup()
-	
+
 	return correct_ids
 
 
@@ -124,10 +124,10 @@ def full_name(name, prefix, te_database, te_cursor):
 		value = te_cursor.get(db_key, db.DB_SET)
 		#print("Value from cursor",value)
 		while (value != None):
-			print("Return value of:",value[1].decode("utf-8"))
+			#print("Return value of:",value[1].decode("utf-8"))
 			correct_ids.append(value[1].decode("utf-8"))
 			value = te_cursor.next_dup()
-	
+
 	return correct_ids
 
 
@@ -147,7 +147,7 @@ def full_location(location, prefix, te_database, te_cursor):
 		#print("Value from cursor",value)
 		
 		while (value != None):
-			print("Return value of",value[1].decode("utf-8"))
+			#print("Return value of",value[1].decode("utf-8"))
 			correct_ids.append(value[1].decode("utf-8"))
 			value = te_cursor.next_dup()
 	
@@ -215,4 +215,8 @@ def simple_term(term, te_database, te_cursor):
 	print(correct_ids)	
 	return correct_ids		
 	
+def displayResults(correct_ids):
+	print("Query Results:")
+	for ids in correct_ids:
+		print(ids)
 	
