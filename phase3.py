@@ -55,6 +55,7 @@ def isAlphaNumeric(string):
 	return True
 
 #Enumerate some query types
+INVALID = -1
 TEXT = 1
 NAME = 2
 LOCATION = 3
