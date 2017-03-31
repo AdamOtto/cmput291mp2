@@ -9,6 +9,7 @@ tw_cursor = tw_database.cursor()
 
 te_database = db.DB()
 te_database.set_flags(db.DB_DUP)
+#te_database.set_flags(db.DB_SET_RANGE)
 te_database.open('te.idx',None, db.DB_BTREE, db.DB_CREATE)
 te_cursor = te_database.cursor()
 
@@ -122,26 +123,26 @@ while True:
 				term = query[5:]
 				qtype = TEXT
 				
-				full_text(term, te_database, te_cursor)
+				full_text(term, False, te_database, te_cursor)
 				
 			elif query[0:4] == 'name':
 				term = query[5:]
 				qtype = NAME
 				
-				full_name(term, te_database, te_cursor)
+				full_name(term,False, te_database, te_cursor)
 				
 			elif query[0:8] == 'location':
 				term = query[9:]
 				qtype = LOCATION
 				
-				full_location(term, te_database, te_cursor)
+				full_location(term,False, te_database, te_cursor)
 							
 			
 			#is this a termPattern query?
 			if isAlphaNumeric(term[:-1]) and term[-1] == '%':
 				print('This query is a prefix full term query')	
 				
-				partial_match(term, tw_database, tw_cursor)
+				partial_match(term, te_database, te_cursor)
 							
 			elif isAlphaNumeric(term):
 				print('This is a non-prefix full term query')

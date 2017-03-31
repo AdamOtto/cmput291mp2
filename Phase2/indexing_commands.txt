@@ -1,9 +1,17 @@
-cat load_tweets.txt | db_load -T -c duplicates=1 -t hash tw.idx
-or for directly running on the original text files 
+db_load -f load_tweets.txt -T -c duplicates=1 -t hash tw.idx
+or (for directly running on the original text files)
 ./break.pl < tweets.txt | db_load -T -c duplicates=1 -t hash tw.idx
+or (to run directly from built text files)
+sort -u tweets.txt | ./break.pl | db_load -T -c duplicates=1 -t hash tw.idx
 
-cat load_dates.txt | db_load -T -c duplicates=1 -t btree da.idx
-or ./break.pl < dates.txt | db_load -T -c duplicates=1 -t btree da.idx
+db_load -f load_dates.txt -T -c duplicates=1 -t btree da.idx
+or
+./break.pl < dates.txt | db_load -T -c duplicates=1 -t btree da.idx
+or
+sort -u dates.txt | ./break.pl | db_load -T -c duplicates=1 -t btree da.idx
 
-cat load_terms.txt | db_load -T -c duplicates=1 -t btree te.idx
-or ./break.pl < terms.txt | db_load -T -c duplicates=1 -t btree te.idx
+db_load -f load_terms.txt -T -c duplicates=1 -t btree te.idx
+or
+./break.pl < terms.txt | db_load -T -c duplicates=1 -t btree te.idx
+or
+sort -u terms.txt | ./break.pl | db_load -T -c duplicates=1 -t btree te.idx
