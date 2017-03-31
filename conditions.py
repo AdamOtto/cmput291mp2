@@ -1,3 +1,4 @@
+from data_retrieval import *
 '''
 A set of queries produces a conditions list, with the following spec for each condition:
 [qtype, info...]
@@ -55,9 +56,10 @@ def cleanConditions(conditions):
 				minYear = con[1]
 				minMonth = con[2]
 				minDay = con[3]
-			elif con[1] < minYear or
+			elif (con[1] < minYear or
 			(con[1] == minYear and con[2] < minMonth) or
-			(con[1] == minYear and con[2] == minMonth and con[3] <= minDay):
+			(con[1] == minYear and con[2] == minMonth and con[3] <= minDay)):
+				print("Redundant DATEGREATER")
 				con[0] = INVALID
 			else:
 				minYear = con[1]
@@ -69,17 +71,18 @@ def cleanConditions(conditions):
 				maxYear = con[1]
 				maxMonth = con[2]
 				maxDay = con[3]
-			elif con[1] > maxYear or
+			elif (con[1] > maxYear or
 			(con[1] == maxYear and con[2] > maxMonth) or
-			(con[1] == maxYear and con[2] == maxMonth and con[3] >= maxDay):
+			(con[1] == maxYear and con[2] == maxMonth and con[3] >= maxDay)):
+				print("Redundant DATELESS")
 				con[0] = INVALID
 			else:
 				maxYear = con[1]
 				maxMonth = con[2]
 				maxDay = con[3]
 	#The whole query is invalid if the min date is greater than the max date
-	if minYear is not None and maxYear is not None and 
-	minYear >= maxYear and minMonth>= maxMonth and minDay >= maxDay:
+	if (minYear is not None and maxYear is not None and 
+	minYear >= maxYear and minMonth>= maxMonth and minDay >= maxDay):
 		print("You appear to have entered a DATELESS that is less than a DATEGREATER, query invalidated")
 		return None
 	
@@ -91,7 +94,7 @@ def cleanConditions(conditions):
 	exactMonth = None
 	exactDay = None
 	for con in conditions:
-		if con[0] = DATEEXACT:
+		if con[0] == DATEEXACT:
 			if exactYear == exactMonth == exactDay == None:
 				#first exactdate condition, set the exact date
 				exactYear = con[1]
@@ -110,11 +113,15 @@ def cleanConditions(conditions):
 	
 	if exactYear is not None:
 		if minYear is not None:
-			if exactYear < minYear and exactMonth < minMonth and exactDay < minDay:
+			if (exactYear < minYear or
+			(exactYear == minYear and exactMonth < minMonth) or
+			(exactYear == minYear and exactMonth == minMonth and exactDay < minDay)):
 				print("You have entered an DATEEXACT less than a DATEGREATER, query invalidated")
 				return None
 		if maxYear is not None:
-			if exactYear > maxYear and exactMonth < maxMonth and exactDay < maxDay:
+			if (exactYear > maxYear or
+			(exactYear == maxYear and exactMonth > maxMonth) or
+			(exactYear == maxYear and exactMonth == maxMonth and exactDay > maxDay)):
 				print("You have entered an DATEEXACT more than a DATELESS, query invalidated")
 				return None
 		# If we made it this far, there is a single valid dateexact, all other date conditions are invalid
@@ -148,7 +155,7 @@ def cleanConditions(conditions):
 	
 			
 			
-def parseConditions(conditions):
+def parseConditions(conditions, te_db, te_cur, da_db, da_cur):
 	'''
 	Given a list of conditions, parses each one using Dyllan's query searching functions.
 	To avoid too much memory usage, will get a query's list, then if there is another query
@@ -159,24 +166,33 @@ def parseConditions(conditions):
 	for con in conditions:
 		current_results = []
 		if con[0] == TEXT:
-			current_results = full_text(con[2], con[1])
+			current_results = full_text(con[2], con[1], te_db, te_cur)
 		elif con[0] == NAME:
-			current_results = full_name(con[2], con[1])
+			current_results = full_name(con[2], con[1], te_db, te_cur)
 		elif con[0] == LOCATION:
-			current_results = full_location(con[2], con[1])
+			current_results = full_location(con[2], te_db, te_cur)
+		elif con[0] == GENERAL:
+			current_results = simple_term(con[1], te_db, te_cur)				
 		elif con[0] == DATEEXACT:
-			current_results = date_exact(year, month, day, db, cur)
+			current_results = date_exact(con[1], con[2], con[3], da_db, da_cur)
 		elif con[0] == DATELESS:
-			current_results = date_less(year, month, day, db, cur)
+			current_results = date_less(con[1], con[2], con[3], da_db, da_cur)
 		elif con[0] == DATEGREATER:
-			current_results = date_greater(year, month, day, db, cur)
+			current_results = date_greater(con[1], con[2], con[3], da_db, da_cur)
 		elif con[0] == INVALID:
 			continue
 		else:
 			print("ERROR IN CONDITION PARSING")
-			
 		if first_time:
 			total_results = set(current_results)
 			first_time = False
 		else:
 			total_results = total_results & set(current_results)
+		#DEBUG
+		print("current results are:")
+		for line in current_results:
+			print(line)
+		print("Total_results are:")
+		for line in total_results:
+			print(line)
+	return total_results
