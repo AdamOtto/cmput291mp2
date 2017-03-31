@@ -214,9 +214,41 @@ def simple_term(term, te_database, te_cursor):
 	
 	print(correct_ids)	
 	return correct_ids		
-	
-def displayResults(correct_ids):
+
+#get_tweet
+#Returns a list with all the information regarding a single tweet.
+#Handles the '\r' at the end of returned ID's.
+def get_tweet(current_id, tw_database, tw_cursor):
+	#Encode the ID into a key and remove that pesky \r
+	db_key = current_id[:len(current_id) - 1].encode('ascii','ignore')
+
+	#Fetch the tweet from the hash table.
+	result = tw_database.get(db_key)	
+	result = result.decode("utf-8")
+
+	#Seperate out the individual elements for easy displaying later
+	TweetComponents = [""] * 8
+	TweetComponents[0] = result[result.find("<id>") + len("<id>"):result.find("</id>")]
+	TweetComponents[1] = result[result.find("<name>") + len("<name>"):result.find("</name>")]
+	TweetComponents[2] = result[result.find("<location>") + len("<location>"):result.find("</location>")]
+	TweetComponents[3] = result[result.find("<created_at>") + len("<created_at>"):result.find("</created_at>")]
+	TweetComponents[4] = result[result.find("<retweet_count>") + len("<retweet_count>"):result.find("</retweet_count>")]
+	TweetComponents[5] = result[result.find("<description>") + len("<description>"):result.find("</description>")]
+	TweetComponents[6] = result[result.find("<url>") + len("<url>"):result.find("</url>")]
+	TweetComponents[7] = result[result.find("<text>") + len("<text>"):result.find("</text>")]
+	return TweetComponents
+
+#displayResults
+#Given a list of ID's, searches for the tweet info from the tw_db and displays the tweet info to the screen.
+def displayResults(correct_ids, tw_database, tw_cursor):
 	print("Query Results:")
 	for ids in correct_ids:
-		print(ids)
-	
+		tweet = get_tweet(ids, tw_database, tw_cursor)
+		print("ID: " + tweet[0])
+		print("Username: " + tweet[1])
+		print("Location: " + tweet[2])
+		print("Created: " + tweet[3])
+		print("retweeted: " + tweet[4] + " time(s)")
+		print("Description: " + tweet[5])
+		print("URL: " + tweet[6])
+		print("Text: " + tweet[7] + "\n")

@@ -27,7 +27,7 @@ Term is the word that appears in the tweet/name/location
 And ID is the tweet ID it orginated from.
 '''
 def createTermsTextFile(tweetID, xmlData):
-    term_file = open("terms.txt", "a")
+    term_file = open("terms_unsorted.txt", "a")
     outputString = ""
     
     #Get all the terms in the text
@@ -62,7 +62,7 @@ where d is the date is form year/month/day => NOTE: I may be wrong.
 and ID is the tweet ID
 '''
 def createDatesTextFile(tweetID, xmlData):
-    term_file = open("dates.txt", "a")
+    term_file = open("dates_unsorted.txt", "a")
     term_file.write(xmlData + ":" + tweetID + "\n")
     term_file.close() 
 
@@ -74,7 +74,7 @@ where ID is the tweet ID
 and rec is the record in xml format
 '''
 def createTweetsTextFile(ID, xmlData):
-    term_file = open("tweets.txt", "a")
+    term_file = open("tweets_unsorted.txt", "a")
     outputString = ID + ":" + xmlData
     term_file.write(outputString)
     term_file.close() 
