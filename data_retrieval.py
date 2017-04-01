@@ -35,7 +35,6 @@ def date_exact(year, month, day, da_database, da_cursor):
 		correct_ids.append(value[1].decode("utf-8"))
 		value = da_cursor.next_dup()
 		
-		
 	return correct_ids
 		
 
@@ -52,7 +51,8 @@ def date_less(year, month, day, da_database, da_cursor):
 	
 	db_key = date.encode('ascii','ignore')
 	data_dates = da_database.keys()
-	
+	print("DATA_DATES:")
+	print(*data_dates)
 	for data_date in data_dates:
 		if (data_date < db_key):		
 			value = da_database.get(data_date)
@@ -66,13 +66,16 @@ def date_less(year, month, day, da_database, da_cursor):
 	
 def date_greater(year, month, day, da_database, da_cursor): 
 	
-	date = date_from_ints(year, month, day)
+	date = date_from_ints(year, month, day+1)
 	if date == False:
 		print('You had a proper date query prefix, but this date is not formatted right: ', date)	
 	
 	correct_ids = []
 	
 	db_key = date.encode('ascii','ignore')
+	
+	#This method does not account for the fact that there are duplicate keys for dates.
+	'''
 	data_dates = da_database.keys()
 	for data_date in data_dates:
 		if (data_date > db_key):		
@@ -81,6 +84,16 @@ def date_greater(year, month, day, da_database, da_cursor):
 			correct_ids.append(value.decode("utf-8"))
 		
 	return correct_ids
+	'''
+	
+	current = da_cursor.set_range(db_key)
+	print(current)
+	while current:
+		correct_ids.append(current[1].decode("utf-8"))
+		current = da_cursor.next()
+	
+	return correct_ids
+	
 			
 
 #given a query that specifies text at the start, this function returns the ids
