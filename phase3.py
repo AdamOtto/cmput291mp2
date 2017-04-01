@@ -136,19 +136,19 @@ while True:
 				term = query[5:]
 				qtype = TEXT
 				
-				results = full_text(term, False, te_database, te_cursor)
+				#results = full_text(term, False, te_database, te_cursor)
 				
 			elif query[0:4] == 'name':
 				term = query[5:]
 				qtype = NAME
 				
-				results = full_name(term,False, te_database, te_cursor)
+				#results = full_name(term,False, te_database, te_cursor)
 				
 			elif query[0:8] == 'location':
 				term = query[9:]
 				qtype = LOCATION
 				
-				results = full_location(term,False, te_database, te_cursor)
+				#results = full_location(term,False, te_database, te_cursor)
 							
 			
 			#is this a termPattern query?
@@ -156,9 +156,11 @@ while True:
 				#print('This query is a prefix full term query')	
 							
 				conditions.append([qtype, True, term[:-1]])
+				
 			elif isAlphaNumeric(term):
 				#print('This is a non-prefix full term query')
 				conditions.append([qtype, False, term])
+				
 			else:
 				print('This full-term query has a proper type, but this term is improper: ', term)
 				continue
