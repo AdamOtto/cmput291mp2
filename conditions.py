@@ -87,7 +87,7 @@ def cleanConditions(conditions):
 		return None
 	
 	#At this point in the cleaning, we can be certain 
-	#that there is a max of 1 dateless and 1 dategreater condition, whose dates are stored already.
+	#that there is a max of 1 dateless and 1 dategreater condition each, whose dates are stored already.
 	
 	#remove redundant exact dates
 	exactYear = None
@@ -162,9 +162,11 @@ def parseConditions(conditions, te_db, te_cur, da_db, da_cur):
 	it will AND it with that queries list before continuing.
 	'''
 	if conditions == []:
+		#empty conditions, no need to do anything
 		return []
-	#@TODO get a date function in data_retrival that will turn the integer part dates passed back into a string
 	first_time = True
+	
+	# For every condition, get the list of matching tweet ids and then itersect it with the all found tweet ids thusfar
 	for con in conditions:
 		current_results = []
 		if con[0] == TEXT:
@@ -186,18 +188,10 @@ def parseConditions(conditions, te_db, te_cur, da_db, da_cur):
 		else:
 			print("ERROR IN CONDITION PARSING")
 		if first_time:
-			#print(current_results)
+			#if this is the first time, we have nothing to itersect with, so we just store the set
 			total_results = set(current_results)
 			first_time = False
 		else:
+			#sets ensure no duplicates
 			total_results = total_results & set(current_results)
-		#DEBUG
-		'''
-		print("current results are:")
-		for line in current_results:
-			print(line)
-		print("Total_results are:")
-		for line in total_results:
-			print(line)
-		'''
 	return total_results
