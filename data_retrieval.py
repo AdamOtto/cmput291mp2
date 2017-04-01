@@ -40,24 +40,30 @@ def date_exact(year, month, day, da_database, da_cursor):
 #this function returns all ids of tweets which dates are less than the one specified	
 #def date_less(date, da_database, da_cursor):
 	
-def date_less(year, month, day, da_database, da_cursor): 
+def date_less(year, month, day, da_database, da_cursor):
+   
+    date = date_from_ints(year, month, day)
+    if date == False:
+        print('You had a proper date query prefix, but this date is not formatted right: ', date)  
+   
+    correct_ids = []
+   
+    db_key = date.encode('ascii','ignore')
+    #data_dates = da_database.keys()
+    #print("data_dates: " + str(data_dates))
+    #for data_date in data_dates:
+    #   if (data_date < db_key):
+    #       value = da_database.get(data_date)
+    #       correct_ids.append(value.decode("utf-8"))
+    #       #value = da_cursor.next_dup()
+    current = da_cursor.set(db_key)
+    current = da_cursor.prev()
+    while current:
+        print("cur: " + str(current))
+        correct_ids.append(current[1].decode("utf-8"))
+        current = da_cursor.prev()
+    return correct_ids
 	
-	date = date_from_ints(year, month, day)
-	if date == False:
-		print('You had a proper date query prefix, but this date is not formatted right: ', date)	
-	
-	correct_ids = []
-	
-	db_key = date.encode('ascii','ignore')
-	data_dates = da_database.keys()
-	print("DATA_DATES:")
-	print(*data_dates)
-	for data_date in data_dates:
-		if (data_date < db_key):		
-			value = da_database.get(data_date)
-			#print("Return value of:", value.decode("utf-8"))
-			correct_ids.append(value.decode("utf-8"))
-	return correct_ids
 	
 	
 #this function returns all ids of tweets which dates are greater than the one specified	
