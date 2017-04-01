@@ -25,7 +25,7 @@ Group Work Strategy:
 For our work strategy initially it started as one of use doing phase 1, and then phase 2, then for phase we had specific parts we would work on such as parsing the input queries or retrieving data from the indexes. We used GitHub as our main way of working and sharing code. We had talked in class and over text message what we had worked on and parts of the code that were working or not working so well.
 Any Assumptions:
 Dylan: Created the index files for phase 2 (1 Hour), and worked on data_retrieval in phase 3, initially creating all the information retrieval functions, and making most of them run with all test cases (15 hrs)
-Adam:
+Adam: Created the first draft of the phase 1 data file preperation.  Updated phase 1 to read a file line by line instead of using the tree command.  Created the display function that would print out the tweet information in full from the tw.idx file.  General debugging and testing on data retreival functions.(15 Hours)
 Austin:
  
 
