@@ -186,16 +186,18 @@ def parseConditions(conditions, te_db, te_cur, da_db, da_cur):
 		else:
 			print("ERROR IN CONDITION PARSING")
 		if first_time:
-			print(current_results)
+			#print(current_results)
 			total_results = set(current_results)
 			first_time = False
 		else:
 			total_results = total_results & set(current_results)
 		#DEBUG
+		'''
 		print("current results are:")
 		for line in current_results:
 			print(line)
 		print("Total_results are:")
 		for line in total_results:
 			print(line)
+		'''
 	return total_results

@@ -22,10 +22,10 @@ def date_exact(year, month, day, da_database, da_cursor):
 	
 	correct_ids = []
 	
-	print("DATE" , date)
+	#print("DATE" , date)
 	#date = date + '\r'
 	db_key = date.encode('ascii','ignore')
-	print("DBKEY" , db_key)
+	#print("DBKEY" , db_key)
 	value = da_cursor.get(db_key, db.DB_SET)
 	#print("Value from cursor",value)
 	
@@ -35,7 +35,7 @@ def date_exact(year, month, day, da_database, da_cursor):
 		value = da_cursor.next_dup()
 		
 	return correct_ids
-		
+
 
 #this function returns all ids of tweets which dates are less than the one specified	
 #def date_less(date, da_database, da_cursor):
@@ -47,8 +47,8 @@ def date_less(year, month, day, da_database, da_cursor):
         print('You had a proper date query prefix, but this date is not formatted right: ', date)  
    
     correct_ids = []
-   
     db_key = date.encode('ascii','ignore')
+    print("db_key: " + str(db_key))
     #data_dates = da_database.keys()
     #print("data_dates: " + str(data_dates))
     #for data_date in data_dates:
@@ -56,10 +56,11 @@ def date_less(year, month, day, da_database, da_cursor):
     #       value = da_database.get(data_date)
     #       correct_ids.append(value.decode("utf-8"))
     #       #value = da_cursor.next_dup()
-    current = da_cursor.set(db_key)
+	
+    current = da_cursor.set_range(db_key)
     current = da_cursor.prev()
+    i = 0
     while current:
-        print("cur: " + str(current))
         correct_ids.append(current[1].decode("utf-8"))
         current = da_cursor.prev()
     return correct_ids
@@ -92,7 +93,7 @@ def date_greater(year, month, day, da_database, da_cursor):
 	'''
 	
 	current = da_cursor.set_range(db_key)
-	print(current)
+	#print(current)
 	while current:
 		correct_ids.append(current[1].decode("utf-8"))
 		current = da_cursor.next()
@@ -230,7 +231,7 @@ def simple_term(term, te_database, te_cursor):
 	correct_ids.extend(name_id)
 	correct_ids.extend(location_id)
 	
-	print(correct_ids)	
+	#print(correct_ids)	
 	return correct_ids		
 
 #get_tweet
@@ -238,7 +239,8 @@ def simple_term(term, te_database, te_cursor):
 #Handles the '\r' at the end of returned ID's.
 def get_tweet(current_id, tw_database, tw_cursor):
 	#Encode the ID into a key and remove that pesky \r
-	db_key = current_id[:len(current_id) - 1].encode('ascii','ignore')
+	#db_key = current_id[:len(current_id) - 1].encode('ascii','ignore')
+	db_key = current_id.encode('ascii','ignore')
 
 	#Fetch the tweet from the hash table.
 	result = tw_database.get(db_key)	

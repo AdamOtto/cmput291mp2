@@ -171,25 +171,30 @@ while True:
 			print('This is not a valid query: ' + query)
 
 	#DEBUG: Print conditions list for manual checking of query parsing
+	'''
 	print("Conditions")
 	for con in conditions:
 		print(*con)
 	print("Cleaning Conditions....")
+	'''
 	conditions = cleanConditions(conditions)
+	'''
 	print("Cleaned Conditions....")
 	if conditions:
 		for con in conditions:
 			print(*con)
 	else:
 		print("Your conditions were invalid, sorry")
-	results = parseConditions(conditions, te_database, te_cursor, da_database, da_cursor)
-	print("QUERY RESULTS")
-	for line in results:
-		print(line)
-	
-	
-	
-#displayResults(TotalResults)
+	'''
+	results = list(parseConditions(conditions, te_database, te_cursor, da_database, da_cursor))
+	results.sort()
+	#print("QUERY RESULTS")
+	displayResults(results, tw_database, tw_cursor)
+	#i = 0
+	#for line in results:
+	#	print(line, end=" ")
+	#	i = i + 1
+	#	if i>100:break
 
 	
 tw_cursor.close()

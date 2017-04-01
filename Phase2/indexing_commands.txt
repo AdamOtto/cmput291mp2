@@ -1,3 +1,8 @@
+TO GET PERMISSIONS FOR THE BREAK.PL
+RUN:
+chmod +x break.pl
+
+
 db_load -f load_tweets.txt -T -c duplicates=1 -t hash tw.idx
 or (for directly running on the original text files)
 ./break.pl < tweets.txt | db_load -T -c duplicates=1 -t hash tw.idx
