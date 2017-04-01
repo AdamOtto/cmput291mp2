@@ -170,7 +170,7 @@ def parseConditions(conditions, te_db, te_cur, da_db, da_cur):
 		elif con[0] == NAME:
 			current_results = full_name(con[2], con[1], te_db, te_cur)
 		elif con[0] == LOCATION:
-			current_results = full_location(con[2], te_db, te_cur)
+			current_results = full_location(con[2], con[1], te_db, te_cur)
 		elif con[0] == GENERAL:
 			current_results = simple_term(con[1], te_db, te_cur)				
 		elif con[0] == DATEEXACT:
