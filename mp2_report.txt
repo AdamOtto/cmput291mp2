@@ -1,0 +1,33 @@
+CMPUT 291
+Mini Project 2
+Report
+
+Dylan Alcock: Lab H01
+Adam Otto: Lab H05
+Austin Crapo: Lab H05
+
+
+
+
+Collaboration:
+Did not collaborate with anyone else.
+
+
+General Overview:
+For phase 1 we ask the user for an XML file with tweets in it and go through the text file extracting the tweets, terms, and dates from that file. Then removing all special characters from everything that was extracted. Once all of the characters have been removed tweets.txt, dates.txt, and terms.txt by adding the correct key and value to the files, splitting them with a ‘:’. 
+For phase 2 we take the three text files and use the UNIX sort command to sort the files and only keep the unique entries. With the sorted files we run the break, Perl script given to us and split the text files so the key value pairs are now on separate lines as db_load expects. Then by running the db_load command on the new files, with flags to take the text file and accept duplicates we create the index files used in Phase 3.
+For phase 3 first we open our index files and create cursors for all of them. We start with a welcome message and then get the user input of the query they would like to enter. We then run the query(s) and output the tweet IDs, along with all the other information of the tweet displayed in a human readable format. Parsing through the queries we get the index that the query needs to be run on, retrieve the data from the indexes. If there are multiple queries we then intersect the IDs and then find the IDs and print out the tweet data.
+Algorithm:
+For evaluating queries if there is a single query, the query runs and gets the IDs and prints out the tweet information. For multiple queries it will go through every query independently and intersect the IDs at the end and then print the IDs that intersect from all the queries and display the tweets. This is costly as the most inefficient query has to look through O(n) operations so for multiple queries it will perform O(n) * the number of queries will be the amount of operations. For wildcards the queries will have to iterate through all the terms in the te.idx, and for range searches of dates it will also have to iterate through all the data in the da.idx to find the correct values. The efficiency of our algorithm is quite low as for multiple queries it has to iterate through all the data in the index file.
+Testing Strategy:
+For out testing strategy while making the function we had used our own methods for the parts we had worked on. Mostly using print statements within functions to see how our functions are working and what the potential output would be. For final testing we would run queries of all the types as specified in the spec and then test extreme cases where lots of queries would be entered or where lots of output would be printed.
+Group Work Strategy:
+For our work strategy initially it started as one of use doing phase 1, and then phase 2, then for phase we had specific parts we would work on such as parsing the input queries or retrieving data from the indexes. We used GitHub as our main way of working and sharing code. We had talked in class and over text message what we had worked on and parts of the code that were working or not working so well.
+Any Assumptions:
+Dylan: Created the index files for phase 2 (1 Hour), and worked on data_retrieval in phase 3, initially creating all the information retrieval functions, and making most of them run with all test cases (15 hrs)
+Adam:
+Austin:
+ 
+
+
+
