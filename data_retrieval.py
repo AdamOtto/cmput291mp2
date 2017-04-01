@@ -19,7 +19,6 @@ def date_exact(year, month, day, da_database, da_cursor):
 	date = date_from_ints(year, month, day)
 	if date == False:
 		print('You had a proper date query prefix, but this date is not formatted right: ', date)
-	return False
 	
 	correct_ids = []
 	

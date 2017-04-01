@@ -161,6 +161,8 @@ def parseConditions(conditions, te_db, te_cur, da_db, da_cur):
 	To avoid too much memory usage, will get a query's list, then if there is another query
 	it will AND it with that queries list before continuing.
 	'''
+	if conditions == []:
+		return []
 	#@TODO get a date function in data_retrival that will turn the integer part dates passed back into a string
 	first_time = True
 	for con in conditions:
@@ -184,6 +186,7 @@ def parseConditions(conditions, te_db, te_cur, da_db, da_cur):
 		else:
 			print("ERROR IN CONDITION PARSING")
 		if first_time:
+			print(current_results)
 			total_results = set(current_results)
 			first_time = False
 		else:
