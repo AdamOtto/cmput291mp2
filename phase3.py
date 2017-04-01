@@ -38,9 +38,9 @@ def isFullTermQuery(string):
 	If not, it is possible that this is a simple term query, which is
 	just the term itself, eg 'germany'
 	'''
-	if (string[0:4] == 'text' or string[0:4] == 'name') and string[4] == ':':
+	if (string[0:5] == 'text:' or string[0:5] == 'name:'):
 		return True
-	if string[0:8] == 'location' and string[8] == ':':
+	if string[0:9] == 'location:':
 		return True
 	return False
 
@@ -139,9 +139,12 @@ while True:
 			elif query[0:8] == 'location':
 				term = query[9:]
 				qtype = LOCATION
-										
-			
-			if isAlphaNumeric(term[:-1]) and term[-1] == '%':	
+				
+			if not term:
+				print("You didn't enter any input so the results are empty!")
+				pass
+							
+			elif isAlphaNumeric(term[:-1]) and term[-1] == '%':	
 							
 				conditions.append([qtype, True, term[:-1]])
 				
