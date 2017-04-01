@@ -10,7 +10,6 @@ tw_cursor = tw_database.cursor()
 
 te_database = db.DB()
 te_database.set_flags(db.DB_DUP)
-#te_database.set_flags(db.DB_SET_RANGE)
 te_database.open('te.idx',None, db.DB_BTREE, db.DB_CREATE)
 te_cursor = te_database.cursor()
 
@@ -87,16 +86,17 @@ DATEGREATER = 7
 
 print('Welcome to Phase 3 for Mini Project 2')
 
-#print(tw_cursor.first())
-#print(te_cursor.first())
-#print(da_cursor.first())
-
-
 while True:
 	conditions = []
-	queries = input('Please enter your query: ')
+	queries = input('Please enter your query (Enter nothing to exit): ')
+	
+	if not queries:
+		print("Exiting phase 3")
+		break
+	
 	#Queries must be case insensitive
 	queries = queries.lower()
+	
 	#Queries can potentially be all passed at once, must process individually according to grammar
 	queries = queries.split()
 	
@@ -123,10 +123,6 @@ while True:
 			if not year.isdigit() or not month.isdigit() or not day.isdigit():
 				print('One of these date values is not a number: ', year, ', ',month,',',day)
 				continue
-			#print('You have a date query of type: ', qtype)
-			#print('Looking for year = ' + year)
-			#print('Looking for month = ' + month)
-			#print('Looking for day = ' + day)
 			
 			conditions.append([qtype, int(year), int(month), int(day)])
 			
@@ -136,71 +132,43 @@ while True:
 				term = query[5:]
 				qtype = TEXT
 				
-				#results = full_text(term, False, te_database, te_cursor)
-				
 			elif query[0:4] == 'name':
 				term = query[5:]
 				qtype = NAME
 				
-				#results = full_name(term,False, te_database, te_cursor)
-				
 			elif query[0:8] == 'location':
 				term = query[9:]
 				qtype = LOCATION
-				
-				#results = full_location(term,False, te_database, te_cursor)
-							
+										
 			
-			#is this a termPattern query?
-			if isAlphaNumeric(term[:-1]) and term[-1] == '%':
-				#print('This query is a prefix full term query')	
+			if isAlphaNumeric(term[:-1]) and term[-1] == '%':	
 							
 				conditions.append([qtype, True, term[:-1]])
 				
 			elif isAlphaNumeric(term):
-				#print('This is a non-prefix full term query')
 				conditions.append([qtype, False, term])
 				
 			else:
 				print('This full-term query has a proper type, but this term is improper: ', term)
 				continue
-		elif isAlphaNumeric(query):
-			#print('You have a simple term query')					
+		elif isAlphaNumeric(query):					
 			conditions.append([GENERAL, query])
+			
 		else:
 			print('This is not a valid query: ' + query)
 
-	#DEBUG: Print conditions list for manual checking of query parsing
-	'''
-	print("Conditions")
-	for con in conditions:
-		print(*con)
-	print("Cleaning Conditions....")
-	'''
-	conditions = cleanConditions(conditions)
-	'''
-	print("Cleaned Conditions....")
-	if conditions:
-		for con in conditions:
-			print(*con)
-	else:
-		print("Your conditions were invalid, sorry")
-	'''
+
 	results = list(parseConditions(conditions, te_database, te_cursor, da_database, da_cursor))
 	results.sort()
 	print("\nQUERY RESULTS -------------------------------\n")
 	displayResults(results, tw_database, tw_cursor)
-	#i = 0
-	#for line in results:
-	#	print(line, end=" ")
-	#	i = i + 1
-	#	if i>100:break
+
 	print("Query Finished, ", len(results), " results found")
 
 	
 tw_cursor.close()
 te_cursor.close()
-da.cursor.close()
+da_cursor.close()
 tw_database.close()
 te_database.close()
 da_database.close()	
