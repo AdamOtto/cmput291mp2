@@ -48,7 +48,7 @@ def date_less(year, month, day, da_database, da_cursor):
    
     correct_ids = []
     db_key = date.encode('ascii','ignore')
-    print("db_key: " + str(db_key))
+    #print("db_key: " + str(db_key))
     #data_dates = da_database.keys()
     #print("data_dates: " + str(data_dates))
     #for data_date in data_dates:
@@ -261,7 +261,7 @@ def get_tweet(current_id, tw_database, tw_cursor):
 #displayResults
 #Given a list of ID's, searches for the tweet info from the tw_db and displays the tweet info to the screen.
 def displayResults(correct_ids, tw_database, tw_cursor):
-	print("Query Results:")
+	#print("Query Results:")
 	for ids in correct_ids:
 		tweet = get_tweet(ids, tw_database, tw_cursor)
 		print("ID: " + tweet[0])

@@ -188,13 +188,14 @@ while True:
 	'''
 	results = list(parseConditions(conditions, te_database, te_cursor, da_database, da_cursor))
 	results.sort()
-	#print("QUERY RESULTS")
+	print("\nQUERY RESULTS -------------------------------\n")
 	displayResults(results, tw_database, tw_cursor)
 	#i = 0
 	#for line in results:
 	#	print(line, end=" ")
 	#	i = i + 1
 	#	if i>100:break
+	print("Query Finished, ", len(results), " results found")
 
 	
 tw_cursor.close()
