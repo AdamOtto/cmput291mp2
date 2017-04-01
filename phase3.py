@@ -39,9 +39,9 @@ def isFullTermQuery(string):
 	If not, it is possible that this is a simple term query, which is
 	just the term itself, eg 'germany'
 	'''
-	if (string[0:4] == 'text' or string[0:4] == 'name') and string[4] == ':':
+	if len(string) >= 5 and (string[0:4] == 'text' or string[0:4] == 'name') and string[4] == ':':
 		return True
-	if string[0:8] == 'location' and string[8] == ':':
+	if len(string) >= 9 and string[0:8] == 'location' and string[8] == ':':
 		return True
 	return False
 
