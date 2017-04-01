@@ -182,29 +182,37 @@ def partial_match(term, te_database, te_cursor):
 	#db_key = term[:-1].encode('ascii','ignore')
 	#te_database.set_bt_compare(te_database, db_key);
 	#search_term = "t-" + term.lower()[:-1] #+ "\r"
-	keys = te_database.keys()
+	#keys = te_database.keys()
 	#print(data_dates)
-	for key in keys:
+	#for key in keys:
 		#if (data_date > db_key):
-		search_key = key.decode("utf-8")
+		#search_key = key.decode("utf-8")
 		#print("TERM",search_term)
 		#print("KEY",search_key)
 		#print (search_key[2:])
-		if term in search_key:
-			#db_key = search_key.encode('ascii','ignore')
-			value = te_cursor.get(key, db.DB_SET)
+		#if term in search_key:
+	db_key = term.encode('ascii','ignore')
+	value = te_cursor.set_range(db_key, db.DB_SET)
+	t_length = len(term)
+	
+	while value and value[0].decode("utf-8")[:t_length] == term:
+		print("Return value of",value[1].decode("utf-8"))
+		correct_ids.append(value[1].decode("utf-8"))
+		value = te_cursor.next()
+	
+	return correct_ids			
 			#print("Value from cursor",value)
 			
-			while (value != None):
-				print("Return value of",value[1].decode("utf-8"))
-				if value[1].decode("utf-8") in correct_ids:
-					value = te_cursor.next_dup()
-					continue
+		#	while (value != None):
+		#		print("Return value of",value[1].decode("utf-8"))
+		#		if value[1].decode("utf-8") in correct_ids:
+		#			value = te_cursor.next_dup()
+		#			continue
 				
-				correct_ids.append(value[1].decode("utf-8"))
-				print("SEARCH",term)
-				print("VALUE",value[0].decode("utf-8"))				
-				value = te_cursor.next_dup()
+		#		correct_ids.append(value[1].decode("utf-8"))
+		#		print("SEARCH",term)
+		#		print("VALUE",value[0].decode("utf-8"))				
+		#		value = te_cursor.next_dup()
 				#if search_term in value[0].decode("utf-8"):
 				#	print("SEARCH",search_term)
 				#	print("VALUE",value[0].decode("utf-8"))
