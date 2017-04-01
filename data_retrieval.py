@@ -175,7 +175,7 @@ def partial_match(term, te_database, te_cursor):
 	
 	#db_key = term[:-1].encode('ascii','ignore')
 	#te_database.set_bt_compare(te_database, db_key);
-	search_term = "t-" + term.lower()[:-1] #+ "\r"
+	#search_term = "t-" + term.lower()[:-1] #+ "\r"
 	keys = te_database.keys()
 	#print(data_dates)
 	for key in keys:
@@ -184,7 +184,7 @@ def partial_match(term, te_database, te_cursor):
 		#print("TERM",search_term)
 		#print("KEY",search_key)
 		#print (search_key[2:])
-		if search_term in search_key:
+		if term in search_key:
 			#db_key = search_key.encode('ascii','ignore')
 			value = te_cursor.get(key, db.DB_SET)
 			#print("Value from cursor",value)
@@ -196,7 +196,7 @@ def partial_match(term, te_database, te_cursor):
 					continue
 				
 				correct_ids.append(value[1].decode("utf-8"))
-				print("SEARCH",search_term)
+				print("SEARCH",term)
 				print("VALUE",value[0].decode("utf-8"))				
 				value = te_cursor.next_dup()
 				#if search_term in value[0].decode("utf-8"):
